@@ -56,7 +56,7 @@ export const logout = (req, res, next) => {
     try {
         res.cookie('token', '', { maxAge: 0 });
 
-        res.success(null, 'User logged out successfully');
+        res.success(undefined, 'User logged out successfully');
 
         return;
     } catch (error) {

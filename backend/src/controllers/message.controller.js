@@ -54,6 +54,16 @@ export const sendMessage = async (req, res, next) => {
         const { userId: userIChat } = req.params;
         const mySelf = req.user._id;
 
+        //  check if id is valid mongoose id
+        if (!mongoose.isValidObjectId(userIChat)) {
+            return next(new Error('Invalid user id', { cause: 400 }));
+        }
+
+        //  check if id is not same as my id
+        if (userIChat.toString() === mySelf.toString()) {
+            return next(new Error('You can not send message to yourself', { cause: 400 }));
+        }
+
         const chat = new Message({ message, sender: mySelf, receiver: userIChat });
 
         if (req.file) {

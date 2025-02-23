@@ -21,9 +21,12 @@ const Chat = () => {
         if (selectedUser?._id) {
             getMessages(selectedUser._id);
             subscribeToMessages();
+        } else {
+            set({ messages: [] }); // Reset messages when no user is selected
         }
+
         return () => unsubscribeFromMessages();
-    }, [selectedUser?._id]);
+    }, [selectedUser]);
 
     useEffect(() => {
         const detectedLanguages = {};
@@ -40,6 +43,8 @@ const Chat = () => {
             messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
         }
     }, [messages]);
+
+    if (!selectedUser) return <div className='loading-spinner m-auto animate-spin'></div>;
 
     if (isMessagesLoading) {
         return (

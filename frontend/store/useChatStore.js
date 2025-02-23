@@ -37,6 +37,11 @@ export const useChatStore = create((set, get) => ({
     },
 
     sendMessage: async (text, attachment) => {
+        const socket = useAuthStore.getState().socket;
+        const selectedUser = get().selectedUser;
+
+        if (!selectedUser || !socket) return;
+
         const formData = new FormData();
         formData.append('text', text);
 
@@ -45,39 +50,52 @@ export const useChatStore = create((set, get) => ({
         }
 
         try {
-            const res = await axiosInstance.post(`/messages/send/${get().selectedUser._id}`, formData, {
+            const res = await axiosInstance.post(`/messages/send/${selectedUser._id}`, formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
             });
 
             const newMessage = res.data.newMessage;
 
-            // Update messages immediately
-            set({
-                messages: [...get().messages, newMessage],
-            });
+            // Update local messages immediately
+            set((state) => ({
+                messages: [...state.messages, newMessage],
+            }));
+
+            // Emit the new message via Socket.io
+            socket.emit('sendMessage', newMessage);
         } catch (error) {
-            console.error('Error in useMsgStore: ', error);
-            toast.error(error.response.data.message);
+            console.error('Error in sendMessage:', error);
+            toast.error(error.response?.data?.message || 'Failed to send message');
         }
     },
 
     subscribeToMessages: () => {
-        const { selectedUser } = get();
-        if (!selectedUser) return;
-
         const socket = useAuthStore.getState().socket;
+        if (!socket) {
+            console.warn('Socket is not available yet.');
+            return;
+        }
+
+        socket.off('newMessage'); // Prevent duplicate listeners
 
         socket.on('newMessage', (newMessage) => {
-            // if (newMessage.senderId !== selectedUser._id) return;
-            set({
-                messages: [...get().messages, newMessage],
-            });
+            console.log('New message received:', newMessage);
+
+            set((state) => ({
+                messages: [...state.messages, newMessage],
+            }));
         });
     },
 
     unsubscribeFromMessages: () => {
         const socket = useAuthStore.getState().socket;
-        socket.off('newMessage');
+
+        if (!socket) {
+            console.warn('Socket is not available, skipping unsubscribe.');
+            return; // Prevent crash if socket is null
+        }
+
+        socket.off('newMessage'); // Unsubscribe safely
     },
 
     setSelectedUser: (selectedUser) => set({ selectedUser }),

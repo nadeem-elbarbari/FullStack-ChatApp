@@ -29,7 +29,7 @@ io.on('connection', (socket) => {
     }
 
     // Emit the updated online users list
-    io.emit('onlineUsers', Object.keys(userSocket)); // Ensure consistent event name
+    io.emit('onlineUsers', Object.keys(userSocket)); 
 
     socket.on('disconnect', () => {
         console.log('User disconnected:', socket.id);

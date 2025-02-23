@@ -46,6 +46,7 @@ const Sidebar = () => {
                         <div className="hidden lg:block text-left min-w-0">
                             <div className="font-medium truncate">{user?.fullName}</div>
                             <div
+                                dir='rtl'
                                 className={`text-sm ${
                                     onlineUsersId.includes(user._id) ? 'text-primary' : 'text-zinc-400'
                                 }`}

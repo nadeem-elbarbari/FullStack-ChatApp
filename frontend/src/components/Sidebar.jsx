@@ -47,7 +47,7 @@ const Sidebar = () => {
                             <div className="font-medium truncate">{user?.fullName}</div>
                             <div
                                 dir='rtl'
-                                className={`text-sm ${
+                                className={`text-sm text-right ${
                                     onlineUsersId.includes(user._id) ? 'text-primary' : 'text-zinc-400'
                                 }`}
                             >

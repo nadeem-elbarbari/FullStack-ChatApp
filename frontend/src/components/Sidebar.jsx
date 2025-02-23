@@ -6,7 +6,7 @@ import SidebarSkeleton from './Skeletons.jsx';
 
 const Sidebar = () => {
     const { getUsers, selectedUser, setSelectedUser, users, isUsersLoading } = useChatStore();
-    const onlineUsersId = useAuthStore((state) => state.onlineUsersId);
+    const { onlineUsersId, socket } = useAuthStore();
 
     useEffect(() => {
         getUsers();
@@ -21,7 +21,6 @@ const Sidebar = () => {
                     <Users className="size-6" />
                     <span className="font-medium hidden lg:block">الأعضاء</span>
                 </div>
-                {/* Online Toggle */}
             </div>
             <div className="overflow-y-auto w-full py-3">
                 {users.map((user) => (
@@ -41,19 +40,15 @@ const Sidebar = () => {
                                 className="size-12 object-cover rounded-full"
                             />
                             {onlineUsersId.includes(user._id) && (
-                                <span
-                                    className="absolute bottom-0 right-0 size-3
-rounded-full ring-2 ring-zinc-900 bg-green-500"
-                                />
+                                <span className="absolute bottom-0 right-0 size-3 rounded-full ring-2 ring-zinc-900 bg-green-500" />
                             )}
                         </div>
-                        {/* User info - only visible on larger screens */}
                         <div className="hidden lg:block text-left min-w-0">
                             <div className="font-medium truncate">{user?.fullName}</div>
                             <div
                                 className={`text-sm ${
                                     onlineUsersId.includes(user._id) ? 'text-primary' : 'text-zinc-400'
-                                } text-zinc-400 text-right`}
+                                }`}
                             >
                                 {onlineUsersId.includes(user._id) ? 'متصل' : 'غير متصل'}
                             </div>

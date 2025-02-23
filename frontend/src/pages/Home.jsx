@@ -1,14 +1,18 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Sidebar from '../components/Sidebar.jsx';
 import NoChatSelected from '../components/NoChatSelected.jsx';
 import Chat from '../components/Chat.jsx';
 import { useChatStore } from '../../store/useChatStore.js';
+import { useAuthStore } from '../../store/useAuthStore.js';
 
 const Home = () => {
-    const { selectedUser } = useChatStore(); // FIX: Corrected variable name
+    const { selectedUser } = useChatStore();
+    const { connectSocket, disconnectSocket } = useAuthStore();
 
-    // refresh page once only at first render
-    React.useEffect(() => {}, []);
+    useEffect(() => {
+        connectSocket(); // Connect to Socket.io on mount
+        return () => disconnectSocket(); // Disconnect on unmount
+    }, []);
 
     return (
         <div className="h-screen bg-base-200">
@@ -16,7 +20,7 @@ const Home = () => {
                 <div className="bg-base-100 rounded-lg shadow-cl w-full max-w-6xl h-[calc(100vh-8rem)]">
                     <div className="flex h-full rounded-lg overflow-hidden">
                         <Sidebar />
-                        {!selectedUser ? <NoChatSelected /> : <Chat />} {/* FIX: Corrected condition */}
+                        {!selectedUser ? <NoChatSelected /> : <Chat />}
                     </div>
                 </div>
             </div>

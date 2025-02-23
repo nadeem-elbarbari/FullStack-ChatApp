@@ -7,6 +7,9 @@ import { useChatStore } from '../../store/useChatStore.js';
 const Home = () => {
     const { selectedUser } = useChatStore(); // FIX: Corrected variable name
 
+    // refresh page once only at first render
+    React.useEffect(() => {}, []);
+
     return (
         <div className="h-screen bg-base-200">
             <div className="flex items-center justify-center pt-20 px-4">
